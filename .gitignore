@@ -1,0 +1,20 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+logs/
+
+# Claude Code local settings (per-machine, not shared)
+.claude/settings.local.json

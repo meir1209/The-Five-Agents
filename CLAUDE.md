@@ -10,17 +10,48 @@
 
 ## הצוות שלי
 
-- **יעל** - כותבת התוכן של הצוות.
-- **יובל** - מעצב התמונות של הצוות.
+- **יעל** — כותבת התוכן של הצוות. שכתוב, עריכה, ניסוח מחדש, סיכום ותרגום של מאמרים. קוראת מ-`Content/`, כותבת ל-`Output/` (Markdown + HTML).
+  - **Trigger keywords (עברית):** שכתב, שכתוב, ערוך, עריכה, נסח, נסח מחדש, תרגם, תרגום, סכם, סיכום, מאמר, תוכן, פוסט.
+  - **Trigger keywords (English):** rewrite, edit, rephrase, translate, summarize, article, content, post.
+- **יובל** — מעצב התמונות של הצוות. מייצר תמונות JPG עבור מאמרים דרך skill `gpt-image-gen` (OpenAI Images API, מודל `gpt-image-2`). שומר את התוצרים ב-`yuval/outputs/`.
+  - **Trigger keywords (עברית):** תמונה, תמונה של, ציור של, תיצור תמונה, איור, צייר, וויזואל.
+  - **Trigger keywords (English):** image of, picture of, generate image, illustration, draw, visual.
 - **חן** - החוקרת של הצוות.
+
+## זרימה משולבת — מאמר עם תמונות
+
+כשמגיעה בקשה לכתוב מאמר שדורש גם תמונות (זוהה לפי שילוב trigger keywords של יעל ויובל, או בקשה מפורשת), אני מתאם ביניהם לפי הסדר הבא:
+
+a. **מפעיל את יעל** עם המאמר/הבקשה. יעל כותבת MD + HTML, ובמהלך הכתיבה משאירה placeholders בפורמט `{{IMAGE_NEEDED: "..."}}` במקומות שצריך תמונה.
+
+b. **יעל מחזירה לי** את שני הקבצים ב-`Output/` + רשימת ה-placeholders + תיאור לכל אחד.
+
+c. **לכל placeholder, מפעיל את יובל** עם התיאור שיעל כתבה. יובל מייצר את התמונה ושומר ב-`yuval/outputs/<YYYY-MM-DD>-<slug>.jpg`.
+
+d. **משלב חזרה לקבצים הסופיים:**
+   - יוצר תיקייה `Output/images/<article-slug>/` ומעתיק אליה את התמונות שיובל יצר.
+   - מחליף כל `{{IMAGE_NEEDED: "..."}}` ב-MD ב-Markdown image link: `![alt](./images/<article-slug>/<file>.jpg)`.
+   - מחליף כל `{{IMAGE_NEEDED: "..."}}` ב-HTML ב-tag תמונה: `<img src="./images/<article-slug>/<file>.jpg" alt="..." style="max-width:100%;height:auto;display:block;margin:1.5rem auto;">`.
+
+e. **שמירה סופית** — דורס את `Output/<article>.md` ו-`Output/<article>.html` של יעל בגרסה המשולבת. הפלייסהולדרים מוחלפים, התמונות מוטמעות, המאמר מוכן לקריאה.
 
 ## מבנה התיקיות
 
-תחת `.claude/` יושבים שלושת ארגזי הכלים שלי:
+תחת `.claude/` יושבים ארגזי הכלים שלי:
 
-- `agents/` - הגדרות הסוכנים בצוות שלי (יעל, יובל, חן).
-- `skills/` - יכולות (skills) מותאמות אישית שהסוכנים שלי יכולים להשתמש בהן.
-- `commands/` - פקודות (slash commands) מותאמות אישית להפעלה מהירה.
+- `agents/` — הגדרות הסוכנים בצוות שלי (יעל, יובל, חן).
+- `skills/` — יכולות (skills) מותאמות אישית שהסוכנים שלי יכולים להשתמש בהן. כרגע כולל את `gpt-image-gen` (עטיפת OpenAI Images API ליובל).
+- `commands/` — פקודות (slash commands) מותאמות אישית להפעלה מהירה.
+
+בשורש הפרויקט:
+
+- `Content/` — מאמרי גלם ממתינים לשכתוב (קלט ליעל).
+- `Output/` — מאמרים מוגמרים (פלט של יעל + שילוב תמונות שלי).
+  - `Output/images/<article-slug>/` — תמונות שמשתבצות במאמר הספציפי.
+- `yael/` — תיקיית עבודה של יעל (`style-guide.md`, `reference/`).
+- `yuval/` — תיקיית עבודה של יובל:
+  - `reference/` — תמונות השראה לסגנון.
+  - `outputs/` — כל התמונות שיובל ייצר אי-פעם, עם `.txt` sibling לכל אחת המכיל את ה-prompt ששימש.
 
 ## הערה
 
